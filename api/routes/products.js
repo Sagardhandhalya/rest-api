@@ -20,26 +20,31 @@ router.post('/',(req,res,next)=>{
     //     name:req.body.name,
     //     price:req.body.price
     // }
-    
+
     const product = new Product({
         name:req.body.name,
         price:req.body.price
     })
     product.save()
-        .then(result=>console.log(result))
-        .catch(err=>console.log(err))
-
-    res.status(201).json({
-        message:'product/POST Request',
-        createProduct:product
-    })
+        .then(result=>{
+                res.status(201).json({
+                message:'product/POST Request',
+                createProduct:result
+            })
+        })
+        .catch(err=>{
+            console.log(err);
+            res.status(500).json({
+                error:err
+            })
+        })
 })
 
 router.get('/:productId',(req,res,next)=>{
     const productId=req.params.productId
     Product.findById(productId)
         .then((doc)=>{
-            console.log(doc);
+            console.log("From the database",doc);
             res.status(200).json(doc)
         })
         .catch(err=>{
@@ -50,14 +55,36 @@ router.get('/:productId',(req,res,next)=>{
 
 
 router.patch('/:productId',(req,res,next)=>{
-    const id=parseInt(req.params.productId);
-    res.status(200).json({
-        message:`products/${id}/PETCH Request`
-    })
+    const id=req.params.productId;
+    Product.update({_id:id},{$set:{
+        name:req.body.name,
+        price:req.body.price
+    }})
+        .then(result=>{
+            console.log(result);
+            res.status(200).json(result);
+        })
+        .catch(err=>{
+            console.log(err);
+            res.status(500).json(err)
+        })
 })
 
 router.delete('/:productId',(req,res,next)=>{
-    const id=parseInt(req.params.productId);
+    const id=(req.params.productId);
+
+    Product.remove({_id:id})    
+        .then(doc=>{
+            console.log(doc);
+            res.status(200).json(doc);
+        })
+        .catch(err=>{
+            console.log(err);
+            res.status(500).json({
+                error:err
+            })
+        })
+
     res.status(200).json({
         message:`products/${id}/DELETE Request`
     })
