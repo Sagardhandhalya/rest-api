@@ -6,6 +6,7 @@ const orderRouters=require('./api/routes/orders');
 const bodyParser=require('body-parser');
 const mongoose = require('mongoose');
 
+mongoose.Promise=global.Promise;
 
 mongoose.connect('mongodb://localhost:27017/Shoping-Database')
     .then(()=>console.log('connected to databse'))
