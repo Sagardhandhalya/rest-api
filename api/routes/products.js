@@ -1,11 +1,40 @@
 const express=require('express');
 const router=express.Router();
+const mongoose=require('mongoose');
+const multer = require('multer');
 
 const Product=require('../models/product');
 
+
+const storage =  multer.diskStorage({
+    destination:function(req,file,cb){
+        cb(null,'uplords');
+    },
+    filename:function(req,file,cb){
+        cb(null,new Date().getDate()+file.originalname)
+    }
+})
+
+const fileFilter=(req,file,cb)=>{
+    if(file.mimetype==='image/jpeg'){
+        cb(null,true);
+    }else{
+        cb(null,false);
+    }
+}
+
+const uplord = multer({
+    storage:storage,
+    limits:{
+        fieldSize:1024*1024*10
+    },
+    fileFilter:fileFilter,
+});
+
+
 router.get('/',(req,res,next)=>{
     Product.find()
-        .select('name price _id')
+        .select('name price _id productImage')
         . then(docs=>{
             const responce={
                 count:docs.length,
@@ -13,6 +42,7 @@ router.get('/',(req,res,next)=>{
                     return {
                         name:data.name,
                         price:data.price,
+                        productImage:data.productImage,
                         _id:data._id,
                         request:{
                             type:'GET',
@@ -30,15 +60,12 @@ router.get('/',(req,res,next)=>{
         })
 })
 
-router.post('/',(req,res,next)=>{
-    // const product={
-    //     name:req.body.name,
-    //     price:req.body.price
-    // }
-
+router.post('/',uplord.single('productImage'),(req,res,next)=>{
+    console.log(req.file);
     const product = new Product({
         name:req.body.name,
-        price:req.body.price
+        price:req.body.price,
+        productImage:req.file.path
     })
     product.save()
         .then(result=>{
@@ -47,6 +74,7 @@ router.post('/',(req,res,next)=>{
                 createProduct:{
                     name:result.name,
                     price:result.price,
+                    productImage:result.productImage,
                     _id:result._id,
                     type:{
                         type:'GET',

@@ -13,6 +13,7 @@ mongoose.connect('mongodb://localhost:27017/Shoping-Database')
     .catch(err=>console.log('ErroR..',err))
 
 app.use(morgan('dev'));
+app.use('/uplords',express.static('uplords'));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use((req,res,next)=>{
