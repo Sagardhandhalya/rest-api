@@ -8,7 +8,7 @@ const Product=require('../models/product');
 
 const storage =  multer.diskStorage({
     destination:function(req,file,cb){
-        cb(null,'uplords');
+        cb(null,'./uplords/');
     },
     filename:function(req,file,cb){
         cb(null,new Date().getDate()+file.originalname)
@@ -69,6 +69,7 @@ router.post('/',uplord.single('productImage'),(req,res,next)=>{
     })
     product.save()
         .then(result=>{
+                console.log(result);
                 res.status(201).json({
                 message:'Add product successfully',
                 createProduct:{

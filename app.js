@@ -5,6 +5,7 @@ const productRoutes=require('./api/routes/products');
 const orderRouters=require('./api/routes/orders');
 const bodyParser=require('body-parser');
 const mongoose = require('mongoose');
+const userRouters=require('./api/routes/users');
 
 mongoose.Promise=global.Promise;
 
@@ -28,6 +29,8 @@ app.use((req,res,next)=>{
 
 app.use('/products',productRoutes);
 app.use('/orders',orderRouters);
+app.use('/user',userRouters);
+
 app.use((req,res,next)=>{
     const error=new Error('not found');
     res.status(400);
