@@ -14,7 +14,7 @@ routes.post('/signup',(req,res,next)=>{
                     messages:'User already Exits...'
                 })
             }else{
-                bcrypt.hash(req.body.password,10,(err,hash)=>{
+                bcrypt.hash(req.body.password,5,(err,hash)=>{
                     if(err){
                         return res.status(500).json({
                             error:err 
